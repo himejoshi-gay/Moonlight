@@ -1,5 +1,5 @@
 "use client";
-import { Github, Heart, ServerCrash, VoteIcon } from "lucide-react";
+import { Github, ServerCrash, VoteIcon } from "lucide-react";
 
 import { IcBaselineDiscord } from "@/components/ui/icons/ic-baseline-discord";
 import { useT } from "@/lib/i18n/utils";
@@ -79,17 +79,15 @@ export default function Footer() {
         <div className="flex flex-col items-center gap-2 text-xs text-muted-foreground">
           <p className="max-w-xl">{t("disclaimer")}</p>
 
-          <p className="inline-flex items-center gap-1.5">
-            Maintained with
-            <Heart className="size-3 fill-primary text-primary" />
-            by
+          <p>
+            Maintained by{" "}
             <a
-              href="https://asteria.cat"
+              href="https://github.com/himejoshi-gay"
               className="smooth-transition font-medium text-primary hover:underline"
               target="_blank"
               rel="noopener noreferrer"
             >
-              asteria
+              himejoshi team
             </a>
           </p>
         </div>
