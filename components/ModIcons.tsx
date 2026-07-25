@@ -76,16 +76,28 @@ function formatModName(modAcronym: string): string {
 
 export function ModIcons({
   modsBitset,
+  speedMultiplier,
 }: {
   modsBitset: number;
+  speedMultiplier?: number;
 }) {
-  const activeMods: string[] = LEGACY_BITSET.filter(([bit]) => (modsBitset & (bit as number)) !== 0).map(([, name]) => name as string);
+  let activeMods: string[] = LEGACY_BITSET.filter(([bit]) => (modsBitset & (bit as number)) !== 0).map(([, name]) => name as string);
+
+  const isCustomRate = speedMultiplier && speedMultiplier !== 1.0 && speedMultiplier !== 1.5 && speedMultiplier !== 0.75;
+  if (isCustomRate) {
+    activeMods = activeMods.filter(m => m !== "DT" && m !== "NC" && m !== "HT");
+  }
 
   return (
-    <span className="flex flex-row justify-center space-x-1 md:justify-start">
+    <span className="flex flex-row items-center justify-center space-x-1 md:justify-start">
       {activeMods.map(modName => (
         <ModElement key={modName} modAcronym={modName} />
       ))}
+      {isCustomRate && (
+        <span className="ml-1 rounded bg-primary/20 px-1.5 py-0.5 font-mono text-xs font-semibold text-primary">
+          {speedMultiplier.toFixed(2)}x
+        </span>
+      )}
     </span>
   );
 }
