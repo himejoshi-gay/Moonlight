@@ -59,6 +59,14 @@ function createFormSchema(t: ReturnType<typeof useT>) {
       .min(0, {
         message: t("form.misses.validation.negative"),
       }),
+    clockRate: z.coerce
+      .number()
+      .min(0.5, {
+        message: t("form.clockRate.validation.tooLow"),
+      })
+      .max(2, {
+        message: t("form.clockRate.validation.tooHigh"),
+      }),
   });
 }
 
@@ -78,6 +86,7 @@ export function PPCalculatorDialog({
     accuracy: 100,
     combo: beatmap.max_combo,
     misses: 0,
+    clockRate: 1,
   };
 
   const formSchema = useMemo(() => createFormSchema(t), [t]);
@@ -94,6 +103,7 @@ export function PPCalculatorDialog({
     combo?: number;
     misses?: number;
     mods?: Mods[];
+    clockRate?: number;
   }>(defaultValues);
 
   const { data, error } = useBeatmapPp(
@@ -104,26 +114,43 @@ export function PPCalculatorDialog({
       combo: scoreAttributes.combo,
       misses: scoreAttributes.misses,
       accuracy: scoreAttributes.accuracy,
+      clockRate: scoreAttributes.clockRate,
     },
     { keepPreviousData: true },
   );
 
   const performanceResult = data;
 
-  const beatmapLength = mods.includes(Mods.DOUBLE_TIME)
-    ? Math.floor(beatmap.total_length / 1.5)
+  const speedMods = [Mods.DOUBLE_TIME, Mods.NIGHTCORE, Mods.HALF_TIME];
+  const hasSpeedMod = mods.some(mod => speedMods.includes(mod));
+  const selectedClockRate = form.watch("clockRate");
+  const effectiveClockRate = mods.some(mod => [Mods.DOUBLE_TIME, Mods.NIGHTCORE].includes(mod))
+    ? 1.5
     : mods.includes(Mods.HALF_TIME)
-      ? Math.floor(beatmap.total_length * 1.33)
-      : beatmap.total_length;
+      ? 0.75
+      : selectedClockRate;
+  const beatmapLength = Math.floor(beatmap.total_length / effectiveClockRate);
+
+  function onModsChange(nextMods: Mods[]) {
+    const newlySelectedSpeedMod = speedMods.find(mod => nextMods.includes(mod) && !mods.includes(mod));
+    if (newlySelectedSpeedMod) {
+      form.setValue("clockRate", 1, { shouldDirty: true, shouldValidate: true });
+      setMods([...nextMods.filter(mod => !speedMods.includes(mod)), newlySelectedSpeedMod]);
+      return;
+    }
+
+    setMods(nextMods);
+  }
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    const { accuracy, combo, misses } = values;
+    const { accuracy, combo, misses, clockRate } = values;
 
     setScoreAttributes({
       accuracy,
       combo,
       misses,
       mods,
+      clockRate: hasSpeedMod ? undefined : clockRate,
     });
   }
 
@@ -218,15 +245,59 @@ export function PPCalculatorDialog({
 
             <ModsSelector
               mods={mods}
-              setMods={setMods}
+              setMods={onModsChange}
+              mode={mode}
               variant="big"
               className="border-none bg-transparent p-0 shadow-none"
               ignoreMods={[
                 Mods.NONE,
                 Mods.SUDDEN_DEATH,
                 Mods.PERFECT,
-                Mods.NIGHTCORE,
               ]}
+            />
+
+            <FormField
+              control={form.control}
+              name="clockRate"
+              render={({ field }) => (
+                <FormItem className="rounded-lg border border-border/50 bg-card/50 p-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <FormLabel>{t("form.clockRate.label")}</FormLabel>
+                    <span className="font-mono text-sm font-semibold text-primary">
+                      {Number(field.value).toFixed(2)}x
+                    </span>
+                  </div>
+                  <FormControl>
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="range"
+                        min="0.5"
+                        max="2"
+                        step="0.01"
+                        disabled={hasSpeedMod}
+                        value={field.value}
+                        onChange={event => field.onChange(Number(event.target.value))}
+                        className="h-2 w-full cursor-pointer accent-primary disabled:cursor-not-allowed disabled:opacity-40"
+                      />
+                      <Input
+                        type="number"
+                        min="0.5"
+                        max="2"
+                        step="0.01"
+                        disabled={hasSpeedMod}
+                        value={field.value}
+                        onBlur={field.onBlur}
+                        onChange={event => field.onChange(event.target.value)}
+                        className="w-24 font-mono"
+                      />
+                    </div>
+                  </FormControl>
+                  {hasSpeedMod && (
+                    <p className="text-xs text-muted-foreground">{t("form.clockRate.locked")}</p>
+                  )}
+                  <FormMessage />
+                </FormItem>
+              )}
             />
 
             <Separator className="my-2" />

@@ -1974,6 +1974,26 @@
                 }
               }
             },
+            "clockRate": {
+              "label": {
+                "text": "Rate change",
+                "context": "Form label for custom clock rate input"
+              },
+              "locked": {
+                "text": "Unavailable with DT, NC, or HT",
+                "context": "Message shown when custom clock rate is locked by a speed mod"
+              },
+              "validation": {
+                "tooLow": {
+                  "text": "Rate can't be lower than 0.50x",
+                  "context": "Validation error for custom clock rate below minimum"
+                },
+                "tooHigh": {
+                  "text": "Rate can't be greater than 2.00x",
+                  "context": "Validation error for custom clock rate above maximum"
+                }
+              }
+            },
             "calculate": {
               "text": "Calculate",
               "context": "Button text to calculate PP"

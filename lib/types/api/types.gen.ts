@@ -1169,6 +1169,7 @@ export type GetBeatmapByIdPpData = {
     combo?: number;
     misses?: number;
     accuracy?: number;
+    clockRate?: number;
   };
   url: "/beatmap/{id}/pp";
 };
@@ -1207,6 +1208,7 @@ export type GetBeatmapsetByBeatmapSetByIdPpData = {
     combo?: number;
     misses?: number;
     accuracy?: number;
+    clockRate?: number;
   };
   url: "/beatmapset/{beatmapSet}/{id}/pp";
 };
