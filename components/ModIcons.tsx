@@ -83,7 +83,10 @@ export function ModIcons({
 }) {
   let activeMods: string[] = LEGACY_BITSET.filter(([bit]) => (modsBitset & (bit as number)) !== 0).map(([, name]) => name as string);
 
-  const isCustomRate = speedMultiplier && speedMultiplier !== 1.0 && speedMultiplier !== 1.5 && speedMultiplier !== 0.75;
+  const hasDoubleTime = activeMods.includes("DT") || activeMods.includes("NC");
+  const hasHalfTime = activeMods.includes("HT");
+  const nominalRate = hasDoubleTime ? 1.5 : hasHalfTime ? 0.75 : 1;
+  const isCustomRate = speedMultiplier !== undefined && Math.abs(speedMultiplier - nominalRate) > 0.001;
   if (isCustomRate) {
     activeMods = activeMods.filter(m => m !== "DT" && m !== "NC" && m !== "HT");
   }
@@ -95,7 +98,7 @@ export function ModIcons({
       ))}
       {isCustomRate && (
         <span className="ml-1 rounded bg-primary/20 px-1.5 py-0.5 font-mono text-xs font-semibold text-primary">
-          {speedMultiplier.toFixed(2)}x
+          RC {speedMultiplier.toFixed(2)}x
         </span>
       )}
     </span>

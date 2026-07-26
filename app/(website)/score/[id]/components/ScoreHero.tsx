@@ -78,8 +78,8 @@ export function ScoreHero({
           {/* Player info: mods, score value, global rank */}
           <div className="flex min-w-0 flex-1 flex-col items-center gap-3 md:items-start">
             {/* Mods */}
-            {score.mods_int != null && score.mods_int > 0 && (
-              <ModIcons modsBitset={score.mods_int} />
+            {score.mods_int != null && (score.mods_int > 0 || score.clock_rate !== 1) && (
+              <ModIcons modsBitset={score.mods_int} speedMultiplier={score.clock_rate} />
             )}
 
             {/* Score value */}

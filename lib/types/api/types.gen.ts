@@ -665,6 +665,7 @@ export type ResetPasswordRequest = {
 
 export type ScoreResponse = {
   accuracy: number;
+  clock_rate: number;
   beatmap_id: number;
   count_100: number;
   count_300: number;
