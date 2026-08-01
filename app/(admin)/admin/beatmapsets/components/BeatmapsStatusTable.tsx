@@ -33,7 +33,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { getUserToken } from "@/lib/actions/getUserToken";
 import { useUpdateBeatmapCustomStatus } from "@/lib/hooks/api/beatmap/useUpdateBeatmapCustomStatus";
-import fetcher from "@/lib/services/fetcher";
+import { gatariFetcher } from "@/lib/services/fetcher";
 import type {
   BeatmapSetResponse,
 } from "@/lib/types/api";
@@ -157,12 +157,8 @@ export function BeatmapsStatusTable({
               };
             }
 
-            const gatariData = await fetcher<{ data: [{ ranked: number }] }>(
+            const gatariData = await gatariFetcher<{ data: [{ ranked: number }] }>(
               `beatmaps/get?bb=${beatmap.id}`,
-              {
-                prefixUrl: `https://api.gatari.pw/`,
-                credentials: "omit",
-              },
             );
 
             const ranked = gatariData?.data?.[0]?.ranked;

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { EosIconsThreeDotsLoading } from "@/components/ui/icons/three-dots-loading";
 import { useToast } from "@/hooks/use-toast";
 import { getUserToken } from "@/lib/actions/getUserToken";
-import fetcher from "@/lib/services/fetcher";
+import { gatariFetcher } from "@/lib/services/fetcher";
 import type { BeatmapResponse } from "@/lib/types/api";
 import { BeatmapStatusWeb, Mods } from "@/lib/types/api";
 
@@ -106,12 +106,8 @@ export function BeatmapSuggestedSubmissionStatusesTooltip({
         },
         {
           serverName: "Gatari",
-          suggestedStatus: fetcher<{ data: [{ ranked: number }] }>(
+          suggestedStatus: gatariFetcher<{ data: [{ ranked: number }] }>(
             `beatmaps/get?bb=${beatmap.id}`,
-            {
-              prefixUrl: `https://api.gatari.pw/`,
-              credentials: "omit",
-            },
           ).then((res) => {
             return statusMap[res?.data?.[0]?.ranked];
           }),
