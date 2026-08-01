@@ -15,11 +15,36 @@ const jiti = createJiti(import.meta.url, {
     "@": projectRoot,
   },
 });
-const { consumeOAuthCallback } = await jiti.import(
+const { consumeOAuthCallback, getRegistrationErrorMessage } = await jiti.import(
   "../app/(website)/register/registrationVerification.ts",
 );
 
 const fakeVerificationToken = "fake_discord_verification_grant_123456";
+
+test("uses the server registration rule instead of a generic error", () => {
+  assert.equal(
+    getRegistrationErrorMessage(
+      new Error("Password contains invalid characters"),
+      "Unknown error.",
+    ),
+    "Password contains invalid characters",
+  );
+});
+
+test("falls back when the registration error has no useful server detail", () => {
+  assert.equal(
+    getRegistrationErrorMessage(new Error("  "), "Unknown error."),
+    "Unknown error.",
+  );
+  assert.equal(
+    getRegistrationErrorMessage(new Error("Unknown error"), "Unknown error."),
+    "Unknown error.",
+  );
+  assert.equal(
+    getRegistrationErrorMessage({ response: { status: 400 } }, "Unknown error."),
+    "Unknown error.",
+  );
+});
 
 async function withWindow(windowValue, callback) {
   const originalWindow = globalThis.window;

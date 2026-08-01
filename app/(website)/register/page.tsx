@@ -60,6 +60,7 @@ import {
   clearStoredVerification,
   consumeOAuthCallback,
   getHttpStatus,
+  getRegistrationErrorMessage,
   getVerificationErrorForStatus,
   readStoredVerification,
   storeVerification,
@@ -355,7 +356,10 @@ export default function Register() {
           return;
         }
 
-        setError(t("form.error.unknown"));
+        setError(getRegistrationErrorMessage(
+          registrationError,
+          t("form.error.unknown"),
+        ));
       }
     },
     [
