@@ -10,8 +10,12 @@ export function useRegister() {
   return useSWRMutation(`user/self`, register);
 }
 
-async function register(url: string, { arg }: { arg: PostAuthRegisterData["body"] }) {
+async function register(
+  url: string,
+  { arg }: { arg: NonNullable<PostAuthRegisterData["body"]> },
+) {
   return await poster<PostAuthRegisterResponse>(`auth/register`, {
+    credentials: "include",
     json: {
       ...arg,
     },

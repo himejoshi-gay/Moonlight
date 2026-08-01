@@ -1157,8 +1157,114 @@
           "context": "Welcome title on the registration page"
         },
         "description": {
-          "text": "Please enter your details to create an account. If you aren't sure how to connect to the server, or if you have any other questions, please visit our <a>Wiki page</a>.",
+          "text": "Verify your Discord account, then choose your account details. If you aren't sure how to connect to the server, please visit our <a>Wiki page</a>.",
           "context": "Welcome description text with link to wiki page"
+        }
+      },
+      "verification": {
+        "title": {
+          "text": "Verify with Discord",
+          "context": "Title of the Discord verification step during registration"
+        },
+        "description": {
+          "text": "A verified Discord account is required before you can create an account.",
+          "context": "Description of why Discord verification is required"
+        },
+        "button": {
+          "text": "Continue with Discord",
+          "context": "Button that starts Discord OAuth verification"
+        },
+        "connecting": {
+          "text": "Opening Discord...",
+          "context": "Button text while Discord OAuth is being started"
+        },
+        "preparing": {
+          "text": "Preparing secure registration",
+          "context": "Status while local anti-abuse identity is prepared"
+        },
+        "validating": {
+          "text": "Checking Discord verification",
+          "context": "Status while a returned Discord verification proof is checked"
+        },
+        "pleaseWait": {
+          "text": "This should only take a moment.",
+          "context": "Supporting copy for registration loading states"
+        },
+        "verifiedTitle": {
+          "text": "Discord verified",
+          "context": "Title shown after Discord account verification succeeds"
+        },
+        "verifiedDescription": {
+          "text": "Your verified Discord email will be used for this account.",
+          "context": "Description of how verified Discord identity is used"
+        },
+        "changeAccount": {
+          "text": "Change",
+          "context": "Button to discard the current Discord verification"
+        },
+        "labels": {
+          "username": {
+            "text": "Discord account",
+            "context": "Label for the read-only verified Discord username"
+          },
+          "email": {
+            "text": "Verified email",
+            "context": "Label for the read-only verified Discord email"
+          }
+        },
+        "privacy": {
+          "text": "To prevent duplicate accounts, we store a pseudonymous browser identifier and a hash of limited device characteristics. We do not use this data for advertising.",
+          "context": "Privacy disclosure for registration anti-abuse device signals"
+        },
+        "errorTitle": {
+          "text": "Discord verification wasn't completed",
+          "context": "Title for Discord verification errors"
+        },
+        "errors": {
+          "cancelled": {
+            "text": "You cancelled Discord verification. You can try again when you're ready.",
+            "context": "Error shown when the user declines or cancels Discord OAuth"
+          },
+          "invalid": {
+            "text": "That verification request is no longer valid. Please start again.",
+            "context": "Error shown for an invalid OAuth state or callback"
+          },
+          "unverifiedEmail": {
+            "text": "Verify the email on your Discord account, then try again.",
+            "context": "Error shown when Discord reports an unverified email"
+          },
+          "unsupportedEmailProvider": {
+            "text": "Use a verified Discord email from Gmail, Outlook, Proton, Yahoo, iCloud, or another supported provider.",
+            "context": "Error shown when the verified Discord email provider is not approved for registration"
+          },
+          "ineligible": {
+            "text": "This Discord account isn't currently eligible for registration.",
+            "context": "Error shown when Discord account eligibility checks fail"
+          },
+          "alreadyLinked": {
+            "text": "This Discord account is already associated with an account. Contact support if you need help recovering it.",
+            "context": "Error shown when the verified Discord account has already registered"
+          },
+          "rateLimited": {
+            "text": "Too many registration attempts were made. Please wait and try again later.",
+            "context": "Error shown when registration verification is rate limited"
+          },
+          "unavailable": {
+            "text": "Discord verification is temporarily unavailable. Please try again shortly.",
+            "context": "Error shown when the Discord OAuth flow cannot be started"
+          },
+          "unsupportedBrowser": {
+            "text": "Your browser is blocking secure storage or cryptography required for registration. Allow site storage or try a current browser.",
+            "context": "Error shown when required local browser capabilities are unavailable"
+          },
+          "expired": {
+            "text": "Your Discord verification expired. Please verify again.",
+            "context": "Error shown when the short-lived registration proof expires"
+          },
+          "failed": {
+            "text": "We couldn't verify your Discord account. Please try again.",
+            "context": "Generic Discord verification failure"
+          }
         }
       },
       "form": {
@@ -1240,11 +1346,23 @@
           "unknown": {
             "text": "Unknown error.",
             "context": "Generic error message when an unknown error occurs"
+          },
+          "duplicateAccount": {
+            "text": "Registration is unavailable for this Discord account, browser, or network. Contact support if you believe this is a mistake.",
+            "context": "Generic anti-abuse rejection that does not reveal which signal matched"
+          },
+          "rateLimited": {
+            "text": "Too many registration attempts were made. Please wait and try again later.",
+            "context": "Registration rate limit error"
           }
         },
         "submit": {
           "text": "Register",
           "context": "Text for the registration submit button"
+        },
+        "submitting": {
+          "text": "Creating account...",
+          "context": "Text shown while the registration request is in progress"
         },
         "terms": {
           "text": "By signing up, you agree to the server <a>rules</a>",

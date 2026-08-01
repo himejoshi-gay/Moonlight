@@ -372,6 +372,27 @@ export type DifficultyAttributes = {
   stars: number;
 };
 
+export type DiscordRegistrationStartRequest = {
+  browser_fingerprint: string;
+  fingerprint_version: number;
+};
+
+export type DiscordRegistrationStartResponse = {
+  authorization_url: string;
+};
+
+export type DiscordRegistrationVerificationRequest = {
+  browser_fingerprint: string;
+  fingerprint_version: number;
+  verification_token: string;
+};
+
+export type DiscordRegistrationVerificationResponse = {
+  username: string;
+  email: string;
+  expires_at: string;
+};
+
 export type EditBeatmapsetFavouriteStatusRequest = {
   favourited: boolean;
 };
@@ -656,7 +677,10 @@ export type RefreshTokenResponse = {
 export type RegisterRequest = {
   username: string;
   password: string;
-  email: string;
+  email?: string | null;
+  discord_verification_token?: string | null;
+  browser_fingerprint?: string | null;
+  fingerprint_version?: number | null;
 };
 
 export type ResetPasswordRequest = {
@@ -979,6 +1003,26 @@ export type PostAuthRegisterErrors = {
      * Bad Request
      */
   400: ProblemDetailsResponseType;
+  /**
+     * Unauthorized
+     */
+  401: ProblemDetailsResponseType;
+  /**
+     * Conflict
+     */
+  409: ProblemDetailsResponseType;
+  /**
+     * Gone
+     */
+  410: ProblemDetailsResponseType;
+  /**
+     * Too Many Requests
+     */
+  429: ProblemDetailsResponseType;
+  /**
+     * Service Unavailable
+     */
+  503: ProblemDetailsResponseType;
 };
 
 export type PostAuthRegisterError = PostAuthRegisterErrors[keyof PostAuthRegisterErrors];
@@ -991,6 +1035,84 @@ export type PostAuthRegisterResponses = {
 };
 
 export type PostAuthRegisterResponse = PostAuthRegisterResponses[keyof PostAuthRegisterResponses];
+
+export type PostAuthDiscordStartData = {
+  body?: DiscordRegistrationStartRequest;
+  path?: never;
+  query?: never;
+  url: "/auth/discord/start";
+};
+
+export type PostAuthDiscordStartErrors = {
+  /**
+     * Bad Request
+     */
+  400: ProblemDetailsResponseType;
+  /**
+     * Not Found
+     */
+  404: ProblemDetailsResponseType;
+  /**
+     * Too Many Requests
+     */
+  429: ProblemDetailsResponseType;
+  /**
+     * Service Unavailable
+     */
+  503: ProblemDetailsResponseType;
+};
+
+export type PostAuthDiscordStartError = PostAuthDiscordStartErrors[keyof PostAuthDiscordStartErrors];
+
+export type PostAuthDiscordStartResponses = {
+  /**
+     * OK
+     */
+  200: DiscordRegistrationStartResponse;
+};
+
+export type PostAuthDiscordStartResponse = PostAuthDiscordStartResponses[keyof PostAuthDiscordStartResponses];
+
+export type PostAuthDiscordVerificationData = {
+  body?: DiscordRegistrationVerificationRequest;
+  path?: never;
+  query?: never;
+  url: "/auth/discord/verification";
+};
+
+export type PostAuthDiscordVerificationErrors = {
+  /**
+     * Bad Request
+     */
+  400: ProblemDetailsResponseType;
+  /**
+     * Unauthorized
+     */
+  401: ProblemDetailsResponseType;
+  /**
+     * Not Found
+     */
+  404: ProblemDetailsResponseType;
+  /**
+     * Gone
+     */
+  410: ProblemDetailsResponseType;
+  /**
+     * Service Unavailable
+     */
+  503: ProblemDetailsResponseType;
+};
+
+export type PostAuthDiscordVerificationError = PostAuthDiscordVerificationErrors[keyof PostAuthDiscordVerificationErrors];
+
+export type PostAuthDiscordVerificationResponses = {
+  /**
+     * OK
+     */
+  200: DiscordRegistrationVerificationResponse;
+};
+
+export type PostAuthDiscordVerificationResponse = PostAuthDiscordVerificationResponses[keyof PostAuthDiscordVerificationResponses];
 
 export type GetPingData = {
   body?: never;

@@ -538,6 +538,27 @@ export const zDifficultyAttributes = z.object({
   stars: z.number(),
 });
 
+export const zDiscordRegistrationStartRequest = z.object({
+  browser_fingerprint: z.string().regex(/^[a-f0-9]{64}$/),
+  fingerprint_version: z.number().int().gte(1).lte(1),
+});
+
+export const zDiscordRegistrationStartResponse = z.object({
+  authorization_url: z.string(),
+});
+
+export const zDiscordRegistrationVerificationRequest = z.object({
+  browser_fingerprint: z.string().regex(/^[a-f0-9]{64}$/),
+  fingerprint_version: z.number().int().gte(1).lte(1),
+  verification_token: z.string().min(32).max(128),
+});
+
+export const zDiscordRegistrationVerificationResponse = z.object({
+  username: z.string(),
+  email: z.string(),
+  expires_at: z.string().datetime(),
+});
+
 export const zEditBeatmapsetFavouriteStatusRequest = z.object({
   favourited: z.boolean(),
 });
@@ -1013,7 +1034,22 @@ export const zRefreshTokenResponse = z.object({
 export const zRegisterRequest = z.object({
   username: z.string().min(1),
   password: z.string().min(1),
-  email: z.string().min(1).regex(/^\S[^\s@]*@\S[^\s.]*\.\S+$/),
+  email: z.union([
+    z.string().min(1).regex(/^\S[^\s@]*@\S[^\s.]*\.\S+$/),
+    z.null(),
+  ]).optional(),
+  discord_verification_token: z.union([
+    z.string().min(1),
+    z.null(),
+  ]).optional(),
+  browser_fingerprint: z.union([
+    z.string().regex(/^[a-f0-9]{64}$/),
+    z.null(),
+  ]).optional(),
+  fingerprint_version: z.union([
+    z.number().int().gte(1).lte(1),
+    z.null(),
+  ]).optional(),
 });
 
 export const zResetPasswordRequest = z.object({
@@ -1196,6 +1232,10 @@ export const zPostAuthTokenResponse = zTokenResponse;
 export const zPostAuthRefreshResponse = zRefreshTokenResponse;
 
 export const zPostAuthRegisterResponse = zTokenResponse;
+
+export const zPostAuthDiscordStartResponse = zDiscordRegistrationStartResponse;
+
+export const zPostAuthDiscordVerificationResponse = zDiscordRegistrationVerificationResponse;
 
 export const zGetPingResponse = z.string();
 
