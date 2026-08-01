@@ -168,9 +168,10 @@ test("the first-party poster rejects cross-origin overrides before reading a tok
   });
 });
 
-test("authenticated requests reject request-replacing hooks before token access", async () => {
+test("authenticated requests reject request hooks and custom fetch before token access", async () => {
   await captureRequests(async (requests) => {
     let cookieReads = 0;
+    let customFetchCalls = 0;
     const originalDocument = globalThis.document;
     globalThis.document = {
       get cookie() {
@@ -190,6 +191,16 @@ test("authenticated requests reject request-replacing hooks before token access"
         }),
         /do not allow the "hooks" option/,
       );
+
+      await assert.rejects(
+        fetcher("health", {
+          fetch: async () => {
+            customFetchCalls += 1;
+            return Response.json({ ok: true });
+          },
+        }),
+        /do not allow the "fetch" option/,
+      );
     }
     finally {
       if (originalDocument === undefined) {
@@ -201,6 +212,7 @@ test("authenticated requests reject request-replacing hooks before token access"
     }
 
     assert.equal(cookieReads, 0);
+    assert.equal(customFetchCalls, 0);
     assert.equal(requests.length, 0);
   });
 });
