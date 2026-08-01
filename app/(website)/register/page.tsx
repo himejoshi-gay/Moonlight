@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/form";
 import { IcBaselineDiscord } from "@/components/ui/icons/ic-baseline-discord";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -549,9 +550,9 @@ export default function Register() {
 
                   <div className="grid gap-3 sm:grid-cols-2">
                     <div className="space-y-1.5">
-                      <FormLabel htmlFor="verified-discord-username">
+                      <Label htmlFor="verified-discord-username">
                         {t("verification.labels.username")}
-                      </FormLabel>
+                      </Label>
                       <Input
                         id="verified-discord-username"
                         value={verifiedDiscord.username}
@@ -560,9 +561,9 @@ export default function Register() {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <FormLabel htmlFor="verified-discord-email">
+                      <Label htmlFor="verified-discord-email">
                         {t("verification.labels.email")}
-                      </FormLabel>
+                      </Label>
                       <Input
                         id="verified-discord-email"
                         type="email"
