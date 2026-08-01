@@ -1,14 +1,18 @@
-import type { Options } from "ky";
-
 import { getUserToken } from "@/lib/actions/getUserToken";
 import { kyInstance } from "@/lib/services/fetcher";
+import type { AuthenticatedRequestOptions } from "@/lib/services/firstPartyRequest";
+import { prepareAuthenticatedRequest } from "@/lib/services/firstPartyRequest";
 
-async function poster<T>(url: string, options?: Options) {
+async function poster<T>(
+  url: string,
+  options?: AuthenticatedRequestOptions,
+) {
+  const request = prepareAuthenticatedRequest(url, options);
   const token = await getUserToken();
 
   const result = await kyInstance
-    .post<T>(url, {
-      ...options,
+    .post<T>(request.requestUrl, {
+      ...request.options,
       headers: {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },

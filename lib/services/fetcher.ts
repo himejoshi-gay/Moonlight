@@ -1,14 +1,15 @@
-import type { HTTPError, Options } from "ky";
+import type { HTTPError } from "ky";
 import ky from "ky";
 
 import { getUserToken } from "@/lib/actions/getUserToken";
+import type { AuthenticatedRequestOptions } from "@/lib/services/firstPartyRequest";
+import {
+  firstPartyApiUrl,
+  prepareAuthenticatedRequest,
+} from "@/lib/services/firstPartyRequest";
 import type { ProblemDetailsResponseType } from "@/lib/types/api";
 
-const firstPartyApiUrl
-  = new URL(`https://api.${process.env.NEXT_PUBLIC_SERVER_DOMAIN}/`);
 const gatariApiUrl = new URL("https://api.gatari.pw/");
-
-type FirstPartyOptions = Omit<Options, "prefixUrl">;
 
 async function errorInterceptor(error: HTTPError) {
   const { response } = error;
@@ -42,22 +43,12 @@ const gatariKyInstance = ky.create({
   },
 });
 
-function assertRequestTarget(
-  url: string,
-  expectedBaseUrl: URL,
-  options?: FirstPartyOptions,
-) {
-  if (options && "prefixUrl" in options) {
-    throw new Error(
-      "The first-party fetcher cannot override its API origin. Use a dedicated external client instead.",
-    );
-  }
+function resolveGatariTarget(url: string) {
+  const requestUrl = new URL(url, gatariApiUrl);
 
-  const requestUrl = new URL(url, expectedBaseUrl);
-
-  if (requestUrl.origin !== expectedBaseUrl.origin) {
+  if (requestUrl.origin !== gatariApiUrl.origin) {
     throw new Error(
-      "The first-party fetcher only accepts Hime API URLs. Use a dedicated external client instead.",
+      "The Gatari fetcher only accepts Gatari API URLs.",
     );
   }
 
@@ -84,16 +75,19 @@ async function parseResponse<T>(response: Response) {
   return result as T;
 }
 
-async function fetcher<T>(url: string, options?: FirstPartyOptions) {
-  const requestUrl = assertRequestTarget(url, firstPartyApiUrl, options);
+async function fetcher<T>(
+  url: string,
+  options?: AuthenticatedRequestOptions,
+) {
+  const request = prepareAuthenticatedRequest(url, options);
   const token = await getUserToken();
 
   if (!token && url.includes("user/self")) {
     throw new Error("Unauthorized");
   }
 
-  const response = await kyInstance.get(requestUrl, {
-    ...options,
+  const response = await kyInstance.get(request.requestUrl, {
+    ...request.options,
     headers: {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
@@ -103,7 +97,7 @@ async function fetcher<T>(url: string, options?: FirstPartyOptions) {
 }
 
 export async function gatariFetcher<T>(url: string) {
-  const requestUrl = assertRequestTarget(url, gatariApiUrl);
+  const requestUrl = resolveGatariTarget(url);
 
   const response = await gatariKyInstance.get(requestUrl);
   return await parseResponse<T>(response);

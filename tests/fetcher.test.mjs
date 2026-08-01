@@ -17,6 +17,7 @@ const {
   default: fetcher,
   gatariFetcher,
 } = await jiti.import("../lib/services/fetcher.ts");
+const { default: poster } = await jiti.import("../lib/services/poster.ts");
 
 async function captureRequests(callback) {
   const originalFetch = globalThis.fetch;
@@ -74,6 +75,27 @@ test("the first-party fetcher keeps bearer authentication for Hime", async () =>
   });
 });
 
+test("the first-party poster preserves safe JSON and credential options", async () => {
+  await captureRequests(async (requests) => {
+    await withDocumentCookie("session_token=hime-test-token", async () => {
+      await poster("user/edit/metadata", {
+        credentials: "include",
+        json: { country: "RO" },
+      });
+    });
+
+    assert.equal(requests.length, 1);
+    assert.equal(requests[0].url, "https://api.hime.test/user/edit/metadata");
+    assert.equal(requests[0].method, "POST");
+    assert.equal(
+      requests[0].headers.get("authorization"),
+      "Bearer hime-test-token",
+    );
+    assert.equal(requests[0].credentials, "include");
+    assert.deepEqual(await requests[0].json(), { country: "RO" });
+  });
+});
+
 test("the first-party fetcher rejects cross-origin overrides before reading a token", async () => {
   await captureRequests(async (requests) => {
     let cookieReads = 0;
@@ -90,12 +112,83 @@ test("the first-party fetcher rejects cross-origin overrides before reading a to
         fetcher("beatmaps/get?bb=1", {
           prefixUrl: "https://api.gatari.pw/",
         }),
-        /cannot override its API origin/,
+        /do not allow the "prefixUrl" option/,
       );
 
       await assert.rejects(
         fetcher("https://api.gatari.pw/beatmaps/get?bb=1"),
-        /only accepts Hime API URLs/,
+        /only accept Hime API URLs/,
+      );
+    }
+    finally {
+      if (originalDocument === undefined) {
+        delete globalThis.document;
+      }
+      else {
+        globalThis.document = originalDocument;
+      }
+    }
+
+    assert.equal(cookieReads, 0);
+    assert.equal(requests.length, 0);
+  });
+});
+
+test("the first-party poster rejects cross-origin overrides before reading a token", async () => {
+  await captureRequests(async (requests) => {
+    let cookieReads = 0;
+    const originalDocument = globalThis.document;
+    globalThis.document = {
+      get cookie() {
+        cookieReads += 1;
+        return "session_token=hime-test-token";
+      },
+    };
+
+    try {
+      await assert.rejects(
+        poster("auth/token", {
+          json: { username: "test" },
+          prefixUrl: "https://api.gatari.pw/",
+        }),
+        /do not allow the "prefixUrl" option/,
+      );
+    }
+    finally {
+      if (originalDocument === undefined) {
+        delete globalThis.document;
+      }
+      else {
+        globalThis.document = originalDocument;
+      }
+    }
+
+    assert.equal(cookieReads, 0);
+    assert.equal(requests.length, 0);
+  });
+});
+
+test("authenticated requests reject request-replacing hooks before token access", async () => {
+  await captureRequests(async (requests) => {
+    let cookieReads = 0;
+    const originalDocument = globalThis.document;
+    globalThis.document = {
+      get cookie() {
+        cookieReads += 1;
+        return "session_token=hime-test-token";
+      },
+    };
+
+    try {
+      await assert.rejects(
+        fetcher("health", {
+          hooks: {
+            beforeRequest: [
+              () => new Request("https://api.gatari.pw/beatmaps/get?bb=1"),
+            ],
+          },
+        }),
+        /do not allow the "hooks" option/,
       );
     }
     finally {
@@ -114,7 +207,9 @@ test("the first-party fetcher rejects cross-origin overrides before reading a to
 
 test("the Gatari client omits Hime authentication and browser credentials", async () => {
   await captureRequests(async (requests) => {
-    await gatariFetcher("beatmaps/get?bb=1");
+    await withDocumentCookie("session_token=hime-test-token", async () => {
+      await gatariFetcher("beatmaps/get?bb=1");
+    });
 
     assert.equal(requests.length, 1);
     assert.equal(requests[0].url, "https://api.gatari.pw/beatmaps/get?bb=1");
