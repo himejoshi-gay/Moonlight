@@ -2273,6 +2273,10 @@
         "changeCountryFlag": {
           "text": "Change country flag",
           "context": "Title for the change country flag section"
+        },
+        "discordAccount": {
+          "text": "Discord account",
+          "context": "Title for the verified Discord account settings section"
         }
       },
       "description": {
@@ -2365,6 +2369,154 @@
             "error": {
               "text": "Error occured while changing password!",
               "context": "Error toast message when password change fails"
+            }
+          }
+        },
+        "discordAccount": {
+          "status": {
+            "connected": {
+              "text": "Discord connected",
+              "context": "Heading shown when a verified Discord account is connected"
+            },
+            "notConnected": {
+              "text": "Discord not connected",
+              "context": "Heading shown when no verified Discord account is connected"
+            },
+            "connectedAs": {
+              "text": "Connected as {username}",
+              "context": "Verified Discord username shown in account settings"
+            },
+            "connectedDescription": {
+              "text": "Your Discord identity is verified for this account.",
+              "context": "Description shown when Discord is connected but no display name is available"
+            },
+            "notConnectedDescription": {
+              "text": "Connect Discord to verify your identity on this account.",
+              "context": "Description shown when no Discord account is connected"
+            },
+            "loadErrorTitle": {
+              "text": "Could not load Discord status",
+              "context": "Heading shown when verified Discord status cannot be loaded"
+            },
+            "loadErrorDescription": {
+              "text": "Try again before connecting or disconnecting an account.",
+              "context": "Description shown when verified Discord status cannot be loaded"
+            }
+          },
+          "actions": {
+            "connect": {
+              "text": "Connect Discord",
+              "context": "Button to connect a verified Discord account"
+            },
+            "connecting": {
+              "text": "Connecting…",
+              "context": "Button label while Discord OAuth is starting"
+            },
+            "confirming": {
+              "text": "Confirming…",
+              "context": "Button label while a Discord OAuth callback is being verified"
+            },
+            "change": {
+              "text": "Change account",
+              "context": "Button to replace the connected Discord account"
+            },
+            "disconnect": {
+              "text": "Disconnect",
+              "context": "Button to disconnect the verified Discord account"
+            },
+            "retry": {
+              "text": "Try again",
+              "context": "Button to retry loading verified Discord status"
+            }
+          },
+          "disconnectDialog": {
+            "title": {
+              "text": "Disconnect Discord?",
+              "context": "Title of the Discord disconnect confirmation dialog"
+            },
+            "description": {
+              "text": "You can reconnect later. This does not change how you sign in to your osu! account.",
+              "context": "Description in the Discord disconnect confirmation dialog"
+            },
+            "cancel": {
+              "text": "Cancel",
+              "context": "Button to cancel disconnecting Discord"
+            },
+            "confirm": {
+              "text": "Disconnect",
+              "context": "Button to confirm disconnecting Discord"
+            },
+            "disconnecting": {
+              "text": "Disconnecting…",
+              "context": "Button label while Discord is being disconnected"
+            }
+          },
+          "toast": {
+            "linkSuccess": {
+              "text": "Discord connected",
+              "context": "Success toast title after connecting Discord"
+            },
+            "linkedAs": {
+              "text": "Connected as {username}.",
+              "context": "Success toast description naming the connected Discord account"
+            },
+            "linkError": {
+              "text": "Discord was not connected",
+              "context": "Error toast title after Discord linking fails"
+            },
+            "confirmationError": {
+              "text": "Could not confirm the Discord connection",
+              "context": "Error toast title when status refresh fails after a successful Discord callback"
+            },
+            "unlinkSuccess": {
+              "text": "Discord disconnected",
+              "context": "Success toast after disconnecting Discord"
+            },
+            "unlinkError": {
+              "text": "Discord could not be disconnected",
+              "context": "Error toast title after disconnecting Discord fails"
+            }
+          },
+          "callbackErrors": {
+            "cancelled": {
+              "text": "Discord authorization was cancelled. Your existing connection was not changed.",
+              "context": "Discord account linking cancellation message"
+            },
+            "invalid": {
+              "text": "This Discord authorization is invalid or expired. Please try again.",
+              "context": "Invalid Discord account linking callback message"
+            },
+            "unverifiedEmail": {
+              "text": "Discord requires a verified email address before it can be connected.",
+              "context": "Discord account linking error for an unverified email"
+            },
+            "unsupportedEmailProvider": {
+              "text": "That Discord account does not use a supported email provider.",
+              "context": "Discord account linking error for an unsupported email provider"
+            },
+            "ineligible": {
+              "text": "That Discord account is not eligible to be connected.",
+              "context": "Discord account linking error for an ineligible account"
+            },
+            "alreadyLinked": {
+              "text": "That Discord account is already connected to another account.",
+              "context": "Discord account linking conflict message"
+            },
+            "rateLimited": {
+              "text": "Too many attempts. Please wait a moment and try again.",
+              "context": "Discord account linking rate limit message"
+            },
+            "sessionExpired": {
+              "text": "Your session has expired. Sign in again before changing the Discord connection.",
+              "context": "Discord account linking error for an expired Hime session"
+            },
+            "unavailable": {
+              "text": "Discord verification is temporarily unavailable. Please try again later.",
+              "context": "Discord account linking service outage message"
+            },
+            "failed": {
+              "text": "The Discord connection could not be verified. Please try again.",
+              "context": "Generic Discord account linking error message"
             }
           }
         },

@@ -49,6 +49,7 @@ import useDebounce from "@/lib/hooks/useDebounce";
 import useSelf from "@/lib/hooks/useSelf";
 import { useT } from "@/lib/i18n/utils";
 import type { DiscordRegistrationVerificationResponse } from "@/lib/types/api";
+import { parseDiscordAuthorizationUrl } from "@/lib/utils/discordOAuth";
 
 import type { RegistrationDeviceIdentity } from "./registrationDevice";
 import { getRegistrationDeviceIdentity } from "./registrationDevice";
@@ -278,14 +279,7 @@ export default function Register() {
 
     try {
       const data = await triggerDiscordStart(deviceIdentity);
-      const authorizationUrl = new URL(data.authorization_url);
-
-      if (
-        authorizationUrl.protocol !== "https:"
-        || authorizationUrl.hostname !== "discord.com"
-      ) {
-        throw new Error("Unexpected Discord authorization URL");
-      }
+      const authorizationUrl = parseDiscordAuthorizationUrl(data.authorization_url);
 
       window.location.assign(authorizationUrl.toString());
     }

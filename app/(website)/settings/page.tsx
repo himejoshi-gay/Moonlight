@@ -6,7 +6,7 @@ import {
   NotebookPenIcon,
   User2Icon,
 } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import ChangeCountryInput from "@/app/(website)/settings/components/ChangeCountryInput";
 import ChangeDescriptionInput from "@/app/(website)/settings/components/ChangeDescriptionInput";
@@ -14,8 +14,11 @@ import ChangePasswordInput from "@/app/(website)/settings/components/ChangePassw
 import ChangePlaystyleForm from "@/app/(website)/settings/components/ChangePlaystyleForm";
 import ChangeSocialsForm from "@/app/(website)/settings/components/ChangeSocialsForm";
 import ChangeUsernameInput from "@/app/(website)/settings/components/ChangeUsernameInput";
+import DiscordAccountSettings from "@/app/(website)/settings/components/DiscordAccountSettings";
 import SiteLocalOptions from "@/app/(website)/settings/components/SiteLocalOptions";
 import UploadImageForm from "@/app/(website)/settings/components/UploadImageForm";
+import type { DiscordLinkCallbackResult } from "@/app/(website)/settings/discordLinkCallback";
+import { consumeDiscordLinkCallback } from "@/app/(website)/settings/discordLinkCallback";
 import { FilterOption } from "@/components/FilterOption";
 import { FilterPanel } from "@/components/FilterPanel";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -63,6 +66,23 @@ export default function Settings() {
   const { self, isLoading } = useSelf();
   const { data: userMetadata } = useUserMetadata(self?.user_id ?? null);
   const [activeSection, setActiveSection] = useState<SettingsSection>("profile");
+  const [discordLinkCallback, setDiscordLinkCallback]
+    = useState<DiscordLinkCallbackResult | null>(null);
+
+  useEffect(() => {
+    const callback = consumeDiscordLinkCallback();
+    const requestedSection = new URLSearchParams(window.location.search).get("section");
+
+    if (callback || requestedSection === "account")
+      setActiveSection("account");
+
+    if (callback)
+      setDiscordLinkCallback(callback);
+  }, []);
+
+  const handleDiscordLinkCallback = useCallback(() => {
+    setDiscordLinkCallback(null);
+  }, []);
 
   if (isLoading) {
     return (
@@ -213,6 +233,17 @@ export default function Settings() {
           <div>
             <SectionHeader title={t("sectionLabels.account")} />
             <div className="space-y-6">
+              <div className="space-y-3">
+                <SubsectionHeader title={t("sections.discordAccount")} />
+                <DiscordAccountSettings
+                  userId={self.user_id}
+                  callbackResult={discordLinkCallback}
+                  onCallbackHandled={handleDiscordLinkCallback}
+                />
+              </div>
+
+              <SectionDivider />
+
               <div className="space-y-3">
                 <SubsectionHeader title={t("sections.changeUsername")} />
                 <ChangeUsernameInput />
