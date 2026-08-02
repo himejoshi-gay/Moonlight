@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/form";
 import { IcBaselineDiscord } from "@/components/ui/icons/ic-baseline-discord";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -48,6 +49,7 @@ import useDebounce from "@/lib/hooks/useDebounce";
 import useSelf from "@/lib/hooks/useSelf";
 import { useT } from "@/lib/i18n/utils";
 import type { DiscordRegistrationVerificationResponse } from "@/lib/types/api";
+import { parseDiscordAuthorizationUrl } from "@/lib/utils/discordOAuth";
 
 import type { RegistrationDeviceIdentity } from "./registrationDevice";
 import { getRegistrationDeviceIdentity } from "./registrationDevice";
@@ -59,6 +61,7 @@ import {
   clearStoredVerification,
   consumeOAuthCallback,
   getHttpStatus,
+  getRegistrationErrorMessage,
   getVerificationErrorForStatus,
   readStoredVerification,
   storeVerification,
@@ -276,14 +279,7 @@ export default function Register() {
 
     try {
       const data = await triggerDiscordStart(deviceIdentity);
-      const authorizationUrl = new URL(data.authorization_url);
-
-      if (
-        authorizationUrl.protocol !== "https:"
-        || authorizationUrl.hostname !== "discord.com"
-      ) {
-        throw new Error("Unexpected Discord authorization URL");
-      }
+      const authorizationUrl = parseDiscordAuthorizationUrl(data.authorization_url);
 
       window.location.assign(authorizationUrl.toString());
     }
@@ -354,7 +350,10 @@ export default function Register() {
           return;
         }
 
-        setError(t("form.error.unknown"));
+        setError(getRegistrationErrorMessage(
+          registrationError,
+          t("form.error.unknown"),
+        ));
       }
     },
     [
@@ -549,9 +548,9 @@ export default function Register() {
 
                   <div className="grid gap-3 sm:grid-cols-2">
                     <div className="space-y-1.5">
-                      <FormLabel htmlFor="verified-discord-username">
+                      <Label htmlFor="verified-discord-username">
                         {t("verification.labels.username")}
-                      </FormLabel>
+                      </Label>
                       <Input
                         id="verified-discord-username"
                         value={verifiedDiscord.username}
@@ -560,9 +559,9 @@ export default function Register() {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <FormLabel htmlFor="verified-discord-email">
+                      <Label htmlFor="verified-discord-email">
                         {t("verification.labels.email")}
-                      </FormLabel>
+                      </Label>
                       <Input
                         id="verified-discord-email"
                         type="email"

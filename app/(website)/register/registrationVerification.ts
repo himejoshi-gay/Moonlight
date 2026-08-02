@@ -144,6 +144,14 @@ export function getHttpStatus(error: unknown) {
   return response?.status;
 }
 
+export function getRegistrationErrorMessage(error: unknown, fallback: string) {
+  if (!(error instanceof Error))
+    return fallback;
+
+  const message = error.message.trim();
+  return message && message !== "Unknown error" ? message : fallback;
+}
+
 export function getVerificationErrorForStatus(
   status: number | undefined,
 ): VerificationError {

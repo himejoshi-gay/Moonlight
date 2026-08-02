@@ -9,7 +9,9 @@
     "generate:openapi": "dotenv -e .env.local -- openapi-ts",
     "lint": "eslint --fix",
     "lint:check": "eslint",
-    "start": "next start"
+    "start": "next start",
+    "test:discord-callback": "node --test tests/discordRegistrationCallback.test.mjs",
+    "test:discord-link": "node --test tests/discordAccountLink.test.mjs"
   },
   "dependencies": {
     "@bbob/html": "^4.2.0",
